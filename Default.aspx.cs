@@ -2,6 +2,7 @@
 using System.Data;
 using SAPFunctionsOCX;
 using SAPTableFactoryCtrl;
+using ADAuth;
 
 namespace mtlList
 {
@@ -27,6 +28,23 @@ namespace mtlList
             catch { return default(T); }
 
         }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Auth auth = new Auth();
+
+            string domainUserName = auth.GetDomainUserName();
+            string currentUserID = auth.GetUserID(domainUserName);
+            var groupList = auth.GetGroupLists(currentUserID);
+            var isInGroup = auth.SearchInGroups(groupList);
+
+            //使用者不在允許名單
+            if (isInGroup == false)
+            {
+                Response.Redirect("disabled.html");
+            }
+        }
+
 
         protected void btnQry_Click(object sender, EventArgs e)
         {
@@ -145,7 +163,7 @@ namespace mtlList
                             dr["異動類型"] = ITAB.get_Cell(i, "BWART").ToString();
                             dr["參考文件"] = ITAB.get_Cell(i, "LFBNR").ToString();
                             dr["數量"] = ITAB.get_Cell(i, "MENGE").ToString().TrimEnd('0').TrimEnd('.');
-                            dr["單價"] = ITAB.get_Cell(i, "NETPR").ToString().TrimEnd('0').TrimEnd('.');
+                            dr["單價"] = ITAB.get_Cell(i, "NETPR").ToString();
                             dr["幣別"] = ITAB.get_Cell(i, "WAERS").ToString();
                             dr["料號"] = ITAB.get_Cell(i, "MATNR").ToString().TrimStart('0');
                             dr["工單"] = ITAB.get_Cell(i, "AUFNR").ToString().TrimStart('0');

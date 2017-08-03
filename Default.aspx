@@ -87,7 +87,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <strong><span class="style2">進料狀況表</span></strong><span class="style2"><strong><br />
+        <strong><span class="style2">對帳用進料狀況表</span></strong><span class="style2"><strong><br />
         </strong></span>
         <table style="width: 100%;">
             <tr>
