@@ -33,6 +33,10 @@ namespace mtlList
         protected void Page_Load(object sender, EventArgs e)
         {
             Auth auth = new Auth();
+            ExportExcel ee = new ExportExcel();
+
+            ee.FormName = "進料狀況表";
+            ee.FormPaperType = "A4L";
 
             string domainUserName = auth.GetDomainUserName();
             string currentUserID = auth.GetUserID(domainUserName);

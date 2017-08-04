@@ -13,25 +13,20 @@ using ClosedXML.Excel;
 /// </summary>
 /// 
 
-namespace ExportNs { 
-        public class ExportExcel
-        {
-        public string formName { get; private set; }
-
+namespace ExportNs {
+    public class ExportExcel
+    {
+        public string FormName { get; set; }
+        public string FormPaperType { get; set; }
         public void Html2Xls(GridView gridView)
         {
-            //
-            // TODO: Add constructor logic here
-            //
+            /// TODO: Add constructor logic here
             string FileName = System.DateTime.Now.ToString("yyyy-MM-dd_HHmm");
             HttpContext.Current.Response.Clear();
 
             HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + FileName + ".xls");
-            //HttpContext.Current.Response.AddHeader("content-disposition","attachment;filename=PoolExport.xls");
-            //HttpContext.Current.Response.ContentType = "application/vnd.xls";
             System.IO.StringWriter sw = new System.IO.StringWriter();
             System.Web.UI.HtmlTextWriter htw = new HtmlTextWriter(sw);
-            htw.Write("<center><table><tr><td colspan='16' align='center'><font size=\"32\">進料狀況表</font></td></tr><tr><td colspan='16'>&nbsp;</td></tr></center>");
             gridView.AllowSorting = false;
             gridView.AllowPaging = false;
             Page page = new Page();
@@ -42,27 +37,29 @@ namespace ExportNs {
             // Realiza las inicializaciones de la instancia de la clase Page que requieran los diseñadores RAD.
             page.DesignerInitialize();
             page.Controls.Add(form);
-            htw.Write("<center>");
             form.Controls.Add(gridView);
             page.RenderControl(htw);
-            htw.Write("</center>");
-            htw.Write("<table><tr><td colspan='16'></td></tr><tr><td colspan='8' align='right'>審核：________________</td><td colspan='8' align='right'>製表：________________</td></tr>");
             //HttpContext.Current.Response.Write(sw.ToString());
             HttpContext.Current.Response.Write(sw.ToString().Substring(sw.ToString().IndexOf("<table")));
             HttpContext.Current.Response.End();        
         }
+
+        /// <summary>
+        /// <para>FormName 報表名稱，列印時作為抬頭使用</para>
+        /// <para>FormPaperType 報表的紙張格式, A4P / A4L / A3P / A3L</para>
+        /// </summary>
+        /// <param name="gv"></param>
         public void ExportToXlsx(GridView gv)
         {
             DataTable mainDt = GetDataTable(gv);
 
-            string FileName = System.DateTime.Now.ToString("yyyy-MM-dd_HHmm");
-            formName = "進料狀況表";
+            string FileName = System.DateTime.Now.ToString("yyyy-MM-dd_HHmm");            
 
             using (XLWorkbook wb = new XLWorkbook())
             {
                 var ws = wb.Worksheets.Add(mainDt, "Sheet1");
 
-                formatWorkSheet(ws, "A4L");
+                formatWorkSheet(ws, FormPaperType);
 
                 string strFileName = HttpContext.Current.Server.UrlEncode(FileName + ".xlsx");
                 System.IO.MemoryStream stream = GetStream(wb); // The method is defined below
@@ -78,7 +75,7 @@ namespace ExportNs {
         private void formatWorkSheet(IXLWorksheet ws, string paperFormat)
         {
             ws.PageSetup.Header.Center.AddText("富荃工業股份有限公司\n").SetFontSize(36).SetBold();
-            ws.PageSetup.Header.Center.AddText(formName).SetFontSize(24).SetBold();
+            ws.PageSetup.Header.Center.AddText(FormName).SetFontSize(24).SetBold();
 
             ws.PageSetup.Footer.Center.AddText("會計：___________________        審核：___________________        製表：___________________").SetFontSize(16);
 
