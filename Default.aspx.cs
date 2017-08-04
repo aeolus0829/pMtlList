@@ -3,6 +3,7 @@ using System.Data;
 using SAPFunctionsOCX;
 using SAPTableFactoryCtrl;
 using ADAuth;
+using ExportNs;
 
 namespace mtlList
 {
@@ -243,8 +244,8 @@ namespace mtlList
         }
         protected void btnConvert_Click(object sender, EventArgs e)
         {
-            //ExportExcel.ExportToExcel(gvData);                      
-            
+            ExportExcel ee = new ExportExcel();
+            ee.ExportToXlsx(gvData);
         }       
-}
+    }
 }
