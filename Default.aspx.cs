@@ -9,8 +9,8 @@ namespace mtlList
 {
     public partial class _Default : System.Web.UI.Page
     {
-        string clientNum = "620";
-        string rfcName = "ZMMRFC002";
+        private string clientNum;
+        private string rfcName;
 
         public string sDate1 { get; private set; }
         public string sDate2 { get; private set; }
@@ -22,6 +22,8 @@ namespace mtlList
         public string sVendorName { get; private set; }
         public string sVendorId { get; private set; }
         public string sMvt { get; private set; }
+        public string FormName { get; set; }
+        public string FormPaperType { get; private set; }
 
         public static T CType<T>(object obj)
         {
@@ -32,11 +34,12 @@ namespace mtlList
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Auth auth = new Auth();
-            ExportExcel ee = new ExportExcel();
+            clientNum = "620";
+            rfcName = "ZMMRFC002";
+            FormName = "進料狀況表";
+            FormPaperType = "A4L";
 
-            ee.FormName = "進料狀況表";
-            ee.FormPaperType = "A4L";
+            Auth auth = new Auth();
 
             string domainUserName = auth.GetDomainUserName();
             string currentUserID = auth.GetUserID(domainUserName);
@@ -249,6 +252,9 @@ namespace mtlList
         protected void btnConvert_Click(object sender, EventArgs e)
         {
             ExportExcel ee = new ExportExcel();
+            ee.FormName = this.FormName;
+            ee.FormPaperType = this.FormPaperType;
+
             ee.ExportToXlsx(gvData);
         }       
     }

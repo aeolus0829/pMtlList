@@ -115,7 +115,7 @@
                 <td bgcolor="#FFFF99" class="auto-style4">
                     結束日期：(必填)</td>
                 <td class="style3">
-                    <asp:TextBox ID="txtDate2" runat="server" TabIndex="6">20170710</asp:TextBox>
+                    <asp:TextBox ID="txtDate2" runat="server" TabIndex="6"></asp:TextBox>
                     <br />
                     <span class="style4"><strong>格式 20131205</strong></span></td>
                 <td class="auto-style1">

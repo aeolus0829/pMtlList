@@ -44,7 +44,7 @@ namespace ExportNs {
             HttpContext.Current.Response.End();        
         }
 
-        /// <summary>
+        /// <summary>       
         /// <para>FormName 報表名稱，列印時作為抬頭使用</para>
         /// <para>FormPaperType 報表的紙張格式, A4P / A4L / A3P / A3L</para>
         /// </summary>
@@ -74,6 +74,9 @@ namespace ExportNs {
 
         private void formatWorkSheet(IXLWorksheet ws, string paperFormat)
         {
+            checkIfEmpty("FormName", FormName);
+            checkIfEmpty("FormPaperType", FormPaperType);
+
             ws.PageSetup.Header.Center.AddText("富荃工業股份有限公司\n").SetFontSize(36).SetBold();
             ws.PageSetup.Header.Center.AddText(FormName).SetFontSize(24).SetBold();
 
@@ -121,6 +124,11 @@ namespace ExportNs {
                     break;  
             }
 
+        }
+
+        private void checkIfEmpty(string key, string value)
+        {
+            if (string.IsNullOrEmpty(value)) throw new NotImplementedException(key);
         }
 
         private double cmToInch(double cm)
