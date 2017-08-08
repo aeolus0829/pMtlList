@@ -4,6 +4,9 @@ using SAPFunctionsOCX;
 using SAPTableFactoryCtrl;
 using ADAuth;
 using ExportNs;
+using System.Linq;
+using System.Collections.Generic;
+using System.Web.UI.WebControls;
 
 namespace mtlList
 {
@@ -24,6 +27,9 @@ namespace mtlList
         public string sMvt { get; private set; }
         public string FormName { get; set; }
         public string FormPaperType { get; private set; }
+        public DataTable sapDataDt { get; set; }
+        public DataTable originDT { get; set; }
+        public DataTable formatedDT { get; set; }
 
         public static T CType<T>(object obj)
         {
@@ -38,6 +44,10 @@ namespace mtlList
             rfcName = "ZMMRFC002";
             FormName = "進料狀況表";
             FormPaperType = "A4L";
+
+            originDT = new DataTable();
+            sapDataDt = new DataTable();
+            formatedDT = new DataTable();
 
             Auth auth = new Auth();
 
@@ -127,38 +137,34 @@ namespace mtlList
                     ifunc.Call();
 
                     Tables tables = (Tables)ifunc.Tables;
-                    Table ITAB = (Table)tables.get_Item("ITAB");
+                    SAPTableFactoryCtrl.Table ITAB = (SAPTableFactoryCtrl.Table)tables.get_Item("ITAB");
 
                     int itabRowCount = ITAB.RowCount;
 
                     if (itabRowCount > 0)
                     {
-
-
-
-                        DataTable dt = new DataTable();
                         for (int i = 1; i <= itabRowCount; i++)
                         {
-                            DataRow dr = dt.NewRow();
+                            DataRow dr = sapDataDt.NewRow();
                             if (i == 1)
                             {
                                 //  dt.Columns.Add("No");
-                                dt.Columns.Add("輸入日期");
-                                dt.Columns.Add("輸入時間");
-                                dt.Columns.Add("採購文件");
-                                dt.Columns.Add("文件項次");
-                                dt.Columns.Add("物料文件");
-                                dt.Columns.Add("異動類型");
-                                dt.Columns.Add("參考文件");
-                                dt.Columns.Add("數量");
-                                dt.Columns.Add("單價");
-                                dt.Columns.Add("幣別");
-                                dt.Columns.Add("料號");
-                                dt.Columns.Add("工單");
-                                dt.Columns.Add("群組說明");
-                                dt.Columns.Add("品名");
-                                dt.Columns.Add("供應商");
-                                dt.Columns.Add("備註");
+                                sapDataDt.Columns.Add("輸入日期");
+                                sapDataDt.Columns.Add("輸入時間");
+                                sapDataDt.Columns.Add("採購文件");
+                                sapDataDt.Columns.Add("文件項次");
+                                sapDataDt.Columns.Add("物料文件");
+                                sapDataDt.Columns.Add("異動類型");
+                                sapDataDt.Columns.Add("參考文件");
+                                sapDataDt.Columns.Add("數量");
+                                sapDataDt.Columns.Add("單價");
+                                sapDataDt.Columns.Add("幣別");
+                                sapDataDt.Columns.Add("料號");
+                                sapDataDt.Columns.Add("工單");
+                                sapDataDt.Columns.Add("群組說明");
+                                sapDataDt.Columns.Add("品名");
+                                sapDataDt.Columns.Add("供應商");
+                                sapDataDt.Columns.Add("備註");
 
                             }
 
@@ -178,12 +184,15 @@ namespace mtlList
                             dr["群組說明"] = ITAB.get_Cell(i, "TEXT20").ToString();
                             dr["品名"] = ITAB.get_Cell(i, "TXZ01").ToString();
                             var vendorName = checkStringLen(ITAB.get_Cell(i, "NAME1").ToString(),4);
+
                             dr["供應商"] = vendorName;
                             dr["備註"] = ITAB.get_Cell(i, "MD_MEMO").ToString().TrimEnd(':');
 
-                            dt.Rows.Add(dr);
+                            sapDataDt.Rows.Add(dr);
                         }
-                        gvData.DataSource = dt.DefaultView;
+                        formatedDT = arrangeExcelLayout(sapDataDt);
+
+                        gvData.DataSource = formatedDT.DefaultView;
                         gvData.DataBind();
                         btnConvert.Visible = true;
                     }
@@ -204,6 +213,12 @@ namespace mtlList
             }
         }
 
+        /// <summary>
+        /// 檢查字串長度 v1 是否超過 v2，若超過就縮短
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
         private string checkStringLen(string v1, int v2)
         {
             var result = "";
@@ -252,10 +267,53 @@ namespace mtlList
         protected void btnConvert_Click(object sender, EventArgs e)
         {
             ExportExcel ee = new ExportExcel();
-            ee.FormName = this.FormName;
+            ee.FormName = changeFormName(rdblExcelFormat.SelectedValue);
             ee.FormPaperType = this.FormPaperType;
 
             ee.ExportToXlsx(gvData);
-        }       
+        }
+
+        private string changeFormName(string selectedValue)
+        {
+            var result = "";
+            switch (selectedValue)
+            {
+                case "0":
+                    result = this.FormName;
+                    break;
+                case "1":
+                    result = rdblExcelFormat.SelectedItem.ToString();
+                    break;
+                case "2":
+                    result = rdblExcelFormat.SelectedItem.ToString();
+                    break;
+            }
+            return result;
+        }
+
+        private DataTable arrangeExcelLayout(DataTable arrangeLayoutDt)
+        {
+            switch (rdblExcelFormat.SelectedValue)
+            {
+                case "1": //格式：每日列印                    
+                    arrangeLayoutDt.Columns.Remove("輸入時間");
+                    arrangeLayoutDt.Columns.Remove("參考文件");
+                    arrangeLayoutDt.Columns.Remove("群組說明");
+                    arrangeLayoutDt.Columns.Remove("備註");
+                    break;
+                case "2": //格式：對帳用
+                    arrangeLayoutDt.Columns.Remove("輸入時間");
+                    arrangeLayoutDt.Columns.Remove("文件項次");
+                    arrangeLayoutDt.Columns.Remove("物料文件");
+                    arrangeLayoutDt.Columns.Remove("異動類型");
+                    arrangeLayoutDt.Columns.Remove("參考文件");
+                    arrangeLayoutDt.Columns.Remove("工單");
+                    arrangeLayoutDt.Columns.Remove("群組說明");
+                    break;
+            }
+
+            return arrangeLayoutDt;
+
+        }
     }
 }

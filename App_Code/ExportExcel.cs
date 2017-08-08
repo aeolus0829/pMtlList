@@ -111,7 +111,7 @@ namespace ExportNs {
                     ws.PageSetup.PageOrientation = XLPageOrientation.Landscape;
 
                     //設定紙張邊界，單位：英吋    
-                    ws.PageSetup.Margins.Top = cmToInch(2.8);
+                    ws.PageSetup.Margins.Top = cmToInch(4);
                     ws.PageSetup.Margins.Bottom = cmToInch(1.9);
                     ws.PageSetup.Margins.Left = cmToInch(0.6);
                     ws.PageSetup.Margins.Right = cmToInch(0.6);
