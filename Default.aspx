@@ -185,10 +185,15 @@
                 <td class="style9">
                     <asp:CheckBox ID="cbZflag" runat="server" TabIndex="20" Text="待驗資料" />
                 </td>
-                <td class="auto-style3">
-                    &nbsp;</td>
+                <td class="auto-style3" bgcolor="#66FFFF">
+                    Excel格式</td>
                 <td class="auto-style9">
-                    &nbsp;</td>
+                    <asp:RadioButtonList ID="rdblExcelFormat" runat="server">
+                        <asp:ListItem Selected="True" Value="0">一般</asp:ListItem>
+                        <asp:ListItem Value="1">每日列印</asp:ListItem>
+                        <asp:ListItem Value="2">對帳用</asp:ListItem>
+                    </asp:RadioButtonList>
+                </td>
                 <td class="style10">
                     &nbsp;</td>
             </tr>
