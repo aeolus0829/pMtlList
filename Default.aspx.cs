@@ -282,10 +282,10 @@ namespace mtlList
                     result = this.FormName;
                     break;
                 case "1":
-                    result = rdblExcelFormat.SelectedItem.ToString();
+                    result = "進料日報表";
                     break;
                 case "2":
-                    result = rdblExcelFormat.SelectedItem.ToString();
+                    result = "進料月報表";
                     break;
             }
             return result;
@@ -309,6 +309,7 @@ namespace mtlList
                     arrangeLayoutDt.Columns.Remove("參考文件");
                     arrangeLayoutDt.Columns.Remove("工單");
                     arrangeLayoutDt.Columns.Remove("群組說明");
+                    arrangeLayoutDt.Columns.Remove("備註");
                     break;
             }
 
