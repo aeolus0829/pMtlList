@@ -185,7 +185,7 @@
                 <td class="style9">
                     <asp:CheckBox ID="cbZflag" runat="server" TabIndex="20" Text="待驗資料" />
                 </td>
-                <td class="auto-style3" bgcolor="#66FFFF">
+                <td class="auto-style3" bgcolor="#00CCFF">
                     Excel格式</td>
                 <td class="auto-style9">
                     <asp:RadioButtonList ID="rdblExcelFormat" runat="server">
